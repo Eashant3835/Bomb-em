@@ -1,6 +1,10 @@
 import socketio
+import uuid
 
 sio = socketio.AsyncServer(async_mode='asgi', cors_allowed_origins="*")
+
+rooms = {}
+sid_to_room = {}
 
 @sio.event
 async def connect(sid, environ, auth):
@@ -18,5 +22,12 @@ async def connect(sid, environ, auth):
 @sio.event
 async def disconnect(sid):
     print(f"Player ID {sid} has disconnected")
+
+@sio.event
+async def create_room(sid,data):
+    session = await sio.get_session(sid)
+    player_id = session.get('player_id')
+    
+
 
 app = socketio.ASGIApp(sio)
